@@ -1,4 +1,15 @@
 # <img src="docs/media/mark.svg" width="30" alt=""> PacketPilot
+**UTS 41909 Cybersecurity Capstone Studio | Spring 2026**
+
+**University:** University of Technology Sydney (UTS)  
+**Project Type:** Bachelor of Cybersecurity — Team Capstone Project  
+**Team:** C20
+
+PacketPilot is a network monitoring and LLM-assisted cybersecurity investigation prototype developed by Team C20 as part of the UTS 41909 Cybersecurity Capstone Studio.
+
+The project combines network traffic analysis, evidence-based investigation, AI-assisted explanations, and controlled, reversible network responses within a laboratory environment.
+
+**Core Technologies:** Python, TShark, Wireshark, Linux, Mininet, Open vSwitch, React, and Agno-powered LLM integration.
 
 **Investigate the traffic. Check the evidence. Verify the response.**
 
@@ -66,4 +77,36 @@ The optional response service operates only in the fixed disconnected lab. It do
 - [Model integration](docs/LLM_INTEGRATION.md), [answer quality](docs/ANSWER_QUALITY.md) and [controlled responses](docs/LINUX_RESPONSE.md).
 - [Component map](docs/HANDOFF_MAP.md), [design decisions](PROJECT_DECISIONS.md) and [test results](docs/VALIDATION.md).
 
-Built by Team C20: **Shayan Ali, Ryea Dsouza, Mohamed Khamis, Martin Huynh, Laurence Lau and Antonio Dormido**. [Team responsibilities](TEAM_ROLES.md).
+## Individual Contribution — Mohamed Khamis
+
+As a member of Team C20, I contributed to the cybersecurity investigation, network monitoring, testing, and validation activities undertaken during the development of PacketPilot.
+
+My contributions included:
+
+- **Network Traffic Analysis:** Investigating network traffic and packet captures using Wireshark and TShark.
+- **Security Scenario Testing:** Executing and examining normal HTTP traffic, port-scanning activity, and suspicious traffic bursts in a controlled laboratory environment.
+- **Evidence Collection:** Capturing and reviewing network evidence to support investigation and validation.
+- **Testing and Validation:** Supporting the evaluation of network monitoring behaviour and documenting technical observations.
+- **Technical Collaboration:** Participating in team development, testing, documentation, and project delivery activities.
+
+This project strengthened my practical skills in network security, traffic analysis, cybersecurity investigations, evidence-based validation, and collaborative software development.
+
+---
+
+## Project Team
+
+**UTS 41909 Cybersecurity Capstone Studio – Spring 2026**
+
+**Team C20 – PacketPilot**
+
+Developed collaboratively by six team members:
+
+- Shayan Ali
+- Ryea Dsouza
+- Mohamed Khamis
+- Martin Huynh
+- Laurence Lau
+- Antonio Dormido
+
+For detailed team responsibilities, see [TEAM_ROLES.md](TEAM_ROLES.md).
+
