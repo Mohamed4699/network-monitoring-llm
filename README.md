@@ -1,112 +1,39 @@
-# <img src="docs/media/mark.svg" width="30" alt=""> PacketPilot
-**UTS 41909 Cybersecurity Capstone Studio | Spring 2026**
+# Evaluation, Testing and Reproducibility
 
-**University:** University of Technology Sydney (UTS)  
-**Project Type:** Bachelor of Cybersecurity — Team Capstone Project  
-**Team:** C20
+Role member: Antonio Dormido.
 
-PacketPilot is a network monitoring and LLM-assisted cybersecurity investigation prototype developed by Team C20 as part of the UTS 41909 Cybersecurity Capstone Studio.
+The test suite checks supported evidence, reference integrity, application state, provider handling, response boundaries and recovery. [Validation](../../docs/VALIDATION.md) identifies the latest recorded results and separates them from historical checkpoints.
 
-The project combines network traffic analysis, evidence-based investigation, AI-assisted explanations, and controlled, reversible network responses within a laboratory environment.
+## Offline software checks
 
-**Core Technologies:** Python, TShark, Wireshark, Linux, Mininet, Open vSwitch, React, and Agno-powered LLM integration.
+Use the complete project environment described in [SETUP.md](../../SETUP.md). From the project root:
 
-**Investigate the traffic. Check the evidence. Verify the response.**
+    .venv/bin/python -m pip install -r requirements-dev.txt
+    .venv/bin/python -m unittest discover -s components/06-testing-evaluation -p "test_*.py"
 
-PacketPilot gives Linux administrators one workspace for understanding a service problem, following an explanation back to its original records and checking whether an approved network change helped. It combines Python and TShark evidence processing, an Agno-powered hosted investigation and a React interface.
+A machine-readable run can be saved to a new output path:
 
-**[Run locally](SETUP.md)** · [Architecture](docs/HANDOFF_MAP.md) · [Results](docs/VALIDATION.md) · [Team](TEAM_ROLES.md)
+    .venv/bin/python components/06-testing-evaluation/run_checks.py --output validation/local-checks.json --environment-label Ubuntu
 
-## In 15 seconds
+That command creates its output; the source package does not contain an existing local-checks.json report. Expected provider-error and unavailable-tool fixtures are not live inference failures. TShark-dependent tests need the actual executable; a skip is not a pass. The offline suite does not automatically perform paid model evaluations or privileged lab responses.
 
-https://github.com/user-attachments/assets/f2e141b5-e950-4d24-8069-41e2da78a21f
+## Coverage
 
-A short product showcase using the interface components and retained lab evidence.
+- test_packetpilot.py and evidence/log/quality tests cover inputs, provenance, relationships, ambiguity, supported calculations and compatibility.
+- test_agent.py and test_investigator.py exercise checked provider/tool behaviour with controlled responses.
+- test_web.py and test_react_runs.py cover API, state, runs, history and failure/retry paths.
+- Response/workspace tests cover policy, approval replay/expiry and recovery using controlled lab doubles.
+- test_investigation_depth.py and test_review_fixes.py cover case scope, applied comparisons, diagnostic pairing and final boundary corrections.
+- frontend/tests/ retains interface checks. Normal operators use the prebuilt UI; frontend build tools are not an installation prerequisite.
 
-## One connected investigation
+## Extraction and hosted evaluation
 
-1. **Bring in the evidence.** Import a packet capture or supported saved traffic log. Original files, record identities and coverage stay available.
-2. **Ask a practical question.** For example, “Why are replies slower than the baseline?” The model can inspect packets, flows and service statistics before answering.
-3. **Check the explanation.** Open a cited record, follow the request and reply directions, or compare baseline, problem and follow-up sources.
-4. **Review a response.** In the disconnected lab, inspect a temporary block or rate limit, its target and its reversal before giving separate approval.
-5. **Measure and restore.** Check the selected client and the unaffected control, then roll back or let the independent expiry restore access. Export the investigation when finished.
+verify_evidence_pipeline.py produces a new labelled extraction output when explicitly run. Comparison with TShark checks field extraction, not a model's attack interpretation.
 
-## How it fits together
+evaluate_llm.py, evaluate_investigator.py, evaluate_quality.py and evaluate_response_refinement.py support their declared cases and output contracts. Live evaluation requires the explicit live option and the operator's configured provider key. Keep every attempt and its settings; review prose and supporting evidence separately from structural acceptance. Older runners remain version-specific, not automatic tests of every current feature.
 
-![PacketPilot investigation and controlled-response workflow](docs/media/workflow.svg)
+## Real lab evidence
 
-The model investigates and recommends. The operator approves, and a separate Linux service enforces the permitted action. Imported traffic alone never grants permission to change a network.
+Portable tests are not real firewall operations. Actual approval/effect/restoration and app-off expiry were checked separately in the fixed disconnected lab. Use the normal interface and [response guide](../../docs/LINUX_RESPONSE.md) for that workflow. The retained exercise_linux_response.py helper defaults to loopback port 8768 and is an explicit test harness, not the normal 8765 launcher.
 
-## Run locally
-
-Ubuntu 24.04 with Python 3.12 and TShark is the reference environment. The React interface is included ready to serve. Node and Vite are not needed to use it.
-
-```sh
-git clone https://github.com/shayanxcyber/network-monitoring-llm.git
-cd network-monitoring-llm
-sudo apt install python3-venv tshark
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements-ubuntu-verified.txt
-.venv/bin/python launch.py
-```
-
-Open **http://127.0.0.1:8765**. Browsing evidence works without an API key. For hosted questions, run `.venv/bin/python configure_key.py` and enter your own key locally. The default is `deepseek-flash`, thinking enabled and max reasoning.
-
-[SETUP.md](SETUP.md) covers file-only operation, the exact supported log format and the optional disconnected lab. Live responses require that lab installation and a fresh lab-issued capture.
-
-## Recorded results
-
-| Check | Result |
-|---|---|
-| Controlled identification | 17 of 20 scenarios passed all three repeats |
-| Unwarranted benign alerts | 0 of 10 benign scenarios across 30 attempts |
-| Software regression | 488 backend checks and 64 frontend checks |
-| Constrained VM workflow | 2 vCPUs and 3.95 GB RAM |
-
-The model evaluation used 60 attempts and still contained one material answer error and 12 minor citation or precision issues. These controlled development results are not general detection accuracy. [Validation](docs/VALIDATION.md) explains the methods, release boundaries, latency and resource measurements.
-
-## Supported scope
-
-Current input is classic Ethernet PCAP or the documented eleven-field TShark TSV, with outer unfragmented IPv4 TCP/UDP traffic in `10.77.0.0/24`. Inputs are limited to 8 MiB and 10,000 records. Visible HTTP/DNS observations and timing pairs have explicit coverage limits. There is no decryption or universal protocol decoder.
-
-The optional response service operates only in the fixed disconnected lab. It does not change the host-management firewall or provide arbitrary shell access. Review permission to send selected evidence to a hosted provider before using real traffic.
-
-## Explore the project
-
-- [Evidence fields and provenance](docs/EVIDENCE_V2.md), [saved logs](docs/SAVED_FIELD_LOGS.md) and [service comparisons](docs/INVESTIGATION_DEPTH.md).
-- [Model integration](docs/LLM_INTEGRATION.md), [answer quality](docs/ANSWER_QUALITY.md) and [controlled responses](docs/LINUX_RESPONSE.md).
-- [Component map](docs/HANDOFF_MAP.md), [design decisions](PROJECT_DECISIONS.md) and [test results](docs/VALIDATION.md).
-
-## Individual Contribution — Mohamed Khamis
-
-As a member of Team C20, I contributed to the cybersecurity investigation, network monitoring, testing, and validation activities undertaken during the development of PacketPilot.
-
-My contributions included:
-
-- **Network Traffic Analysis:** Investigating network traffic and packet captures using Wireshark and TShark.
-- **Security Scenario Testing:** Executing and examining normal HTTP traffic, port-scanning activity, and suspicious traffic bursts in a controlled laboratory environment.
-- **Evidence Collection:** Capturing and reviewing network evidence to support investigation and validation.
-- **Testing and Validation:** Supporting the evaluation of network monitoring behaviour and documenting technical observations.
-- **Technical Collaboration:** Participating in team development, testing, documentation, and project delivery activities.
-
-This project strengthened my practical skills in network security, traffic analysis, cybersecurity investigations, evidence-based validation, and collaborative software development.
-
----
-
-## Project Team
-
-**UTS 41909 Cybersecurity Capstone Studio – Spring 2026**
-
-**Team C20 – PacketPilot**
-
-Developed collaboratively by six team members:
-
-- Shayan Ali
-- Ryea Dsouza
-- Mohamed Khamis
-- Martin Huynh
-- Laurence Lau
-- Antonio Dormido
-
-For detailed team responsibilities, see [TEAM_ROLES.md](TEAM_ROLES.md).
-
+Test counts, extraction agreement, valid references, answer quality and measured response effect are different evidence categories. Historical results stay dated; they are not summed into detection accuracy.
